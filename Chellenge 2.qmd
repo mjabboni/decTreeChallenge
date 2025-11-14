@@ -1,0 +1,460 @@
+---
+title: "Decision Tree Challenge"
+subtitle: "Feature Importance and Categorical Variable Encoding"
+format:
+  html: default
+execute:
+  echo: true
+  eval: true
+---
+
+# 🌳 Decision Tree Challenge - Feature Importance and Variable Encoding
+
+## Challenge Overview
+
+**Your Mission:** Create a simple GitHub Pages site that demonstrates how decision trees measure feature importance and analyzes the critical differences between categorical and numerical variable encoding. You'll answer two key discussion questions by adding narrative to a pre-built analysis and posting those answers to your GitHub Pages site as a rendered HTML document.
+
+::: {.callout-warning}
+## ⚠️ AI Partnership Required
+
+This challenge pushes boundaries intentionally. You'll tackle problems that normally require weeks of study, but with Cursor AI as your partner (and your brain keeping it honest), you can accomplish more than you thought possible.
+
+**The new reality:** The four stages of competence are Ignorance → Awareness → Learning → Mastery. AI lets us produce Mastery-level work while operating primarily in the Awareness stage. I focus on awareness training, you leverage AI for execution, and together we create outputs that used to require years of dedicated study.
+:::
+
+## The Decision Tree Problem 🎯
+
+> "The most important thing in communication is hearing what isn't said." - Peter Drucker
+
+**The Core Problem:** Decision trees are often praised for their interpretability and ability to handle both numerical and categorical variables. But what happens when we encode categorical variables as numbers? How does this affect our understanding of feature importance?
+
+**What is Feature Importance?** In decision trees, feature importance measures how much each variable contributes to reducing impurity (or improving prediction accuracy) across all splits in the tree. It's a key metric for understanding which variables matter most for your predictions.
+
+::: {.callout-important}
+## 🎯 The Key Insight: Encoding Matters for Interpretability
+
+**The problem:** When we encode categorical variables as numerical values (like 1, 2, 3, 4...), decision trees treat them as if they have a meaningful numerical order. This can completely distort our analysis.
+
+**The Real-World Context:** In real estate, we know that neighborhood quality, house style, and other categorical factors are crucial for predicting home prices. But if we encode these as numbers, we might get misleading insights about which features actually matter most.
+
+**The Devastating Reality:** Even sophisticated machine learning models can give us completely wrong insights about feature importance if we don't properly encode our variables. A categorical variable that should be among the most important might appear irrelevant, while a numerical variable might appear artificially important.
+
+:::
+
+Let's assume we want to predict house prices and understand which features matter most. The key question is: **How does encoding categorical variables as numbers affect our understanding of feature importance?**
+
+## The Ames Housing Dataset 🏠
+
+We are analyzing the Ames Housing dataset which contains detailed information about residential properties sold in Ames, Iowa from 2006 to 2010. This dataset is perfect for our analysis because it contains a categorical variable (like zip code) and numerical variables (like square footage, year built, number of bedrooms).
+
+## The Problem: ZipCode as Numerical vs Categorical
+
+**Key Question:** What happens when we treat zipCode as a numerical variable in a decision tree? How does this affect feature importance interpretation?
+
+**The Issue:** Zip codes (50010, 50011, 50012, 50013) are categorical variables representing discrete geographic areas, i.e. neighborhoods. When treated as numerical, the tree might split on "zipCode > 50012.5" - which has no meaningful interpretation for house prices.  Zip codes are non-ordinal categorical variables meaning they have no inherent order that aids house price prediction (i.e. zip code 99999 is not the priceiest zip code).
+
+## Data Loading and Model Building
+
+### Python
+
+```{python}
+#| label: load-and-model-python
+#| echo: true
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeRegressor, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import warnings
+warnings.filterwarnings('ignore')
+
+# Load data
+sales_data = pd.read_csv("salesPriceData.csv")
+
+# Prepare model data (treating zipCode as numerical)
+model_vars = ['SalePrice', 'LotArea', 'YearBuilt', 'GrLivArea', 'FullBath', 
+              'HalfBath', 'BedroomAbvGr', 'TotRmsAbvGrd', 'GarageCars', 'zipCode']
+model_data = sales_data[model_vars].dropna()
+
+# Split data
+X = model_data.drop('SalePrice', axis=1)
+y = model_data['SalePrice']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
+
+# Build decision tree
+tree_model = DecisionTreeRegressor(max_depth=3, 
+                                  min_samples_split=20, 
+                                  min_samples_leaf=10, 
+                                  random_state=123)
+tree_model.fit(X_train, y_train)
+
+print(f"Model built with {tree_model.get_n_leaves()} terminal nodes")
+```
+
+## Tree Visualization
+
+### Python
+
+```{python}
+#| label: visualize-tree-python
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+# Visualize tree
+plt.figure(figsize=(10, 6))
+plot_tree(tree_model, 
+          feature_names=X_train.columns,
+          filled=True, 
+          rounded=True,
+          fontsize=10,
+          max_depth=3)
+plt.title("Decision Tree (zipCode as Numerical)")
+plt.tight_layout()
+plt.show()
+```
+
+## Feature Importance Analysis
+
+### Python
+
+```{python}
+#| label: feature-importance-python
+#| echo: false
+
+# Extract and display feature importance
+importance_df = pd.DataFrame({
+    'Feature': X_train.columns,
+    'Importance': tree_model.feature_importances_
+}).sort_values('Importance', ascending=False)
+
+importance_df['Importance_Percent'] = (importance_df['Importance'] * 100).round(2)
+
+# Check zipCode ranking
+zipcode_rank = importance_df[importance_df['Feature'] == 'zipCode'].index[0] + 1
+zipcode_importance = importance_df[importance_df['Feature'] == 'zipCode']['Importance_Percent'].iloc[0]
+```
+
+```{python}
+#| label: importance-plot-python
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+
+# Plot feature importance
+plt.figure(figsize=(8, 5))
+plt.barh(range(len(importance_df)), importance_df['Importance'], 
+         color='steelblue', alpha=0.7)
+plt.yticks(range(len(importance_df)), importance_df['Feature'])
+plt.xlabel('Importance Score')
+plt.title('Feature Importance (zipCode as Numerical)')
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+```
+
+## Critical Analysis: The Encoding Problem
+
+::: {.callout-warning}
+## ⚠️ The Problem Revealed
+
+**What to note:** Our decision tree treated `zipCode` as a numerical variable.  This leads to zip code being unimportant.  Not surprisingly, because there is no reason to believe allowing splits like "zipCode < 50012.5" should be beneficial for house price prediction. This false coding of a variable creates several problems:
+
+1. **Potentially Meaningless Splits:** A zip code of 50013 is not "greater than" 50012 in any meaningful way for house prices
+2. **False Importance:** The algorithm assigns importance to zipCode based on numerical splits rather than categorical distinctions OR the importance of zip code is completely missed as numerical ordering has no inherent relationship to house prices.
+3. **Misleading Interpretations:** We might conclude zipCode is not important when our intuition tells us it should be important (listen to your intuition).
+
+**The Real Issue:** Zip codes are categorical variables representing discrete geographic areas. The numerical values have no inherent order or magnitude relationship to house prices.  These must be modelled as categorical variables.
+:::
+
+## Proper Categorical Encoding: The Solution
+
+Now let's repeat the analysis with zipCode properly encoded as categorical variables to see the difference.
+
+**Python Approach:** One-hot encode zipCode (create dummy variables for each zip code)
+
+### Categorical Encoding Analysis
+
+### Python
+
+```{python}
+#| label: categorical-python
+#| echo: true
+#| include: false
+# One-hot encode zipCode
+import pandas as pd
+
+# Create one-hot encoded zipCode
+zipcode_encoded = pd.get_dummies(model_data['zipCode'], prefix='zipCode')
+model_data_cat = pd.concat([model_data.drop('zipCode', axis=1), zipcode_encoded], axis=1)
+
+# Split data
+X_cat = model_data_cat.drop('SalePrice', axis=1)
+y_cat = model_data_cat['SalePrice']
+X_train_cat, X_test_cat, y_train_cat, y_test_cat = train_test_split(X_cat, y_cat, test_size=0.2, random_state=123)
+
+# Build decision tree with one-hot encoded zipCode
+tree_model_cat = DecisionTreeRegressor(max_depth=3, 
+                                      min_samples_split=20, 
+                                      min_samples_leaf=10, 
+                                      random_state=123)
+tree_model_cat.fit(X_train_cat, y_train_cat)
+
+# Feature importance with one-hot encoded zipCode
+importance_cat_df = pd.DataFrame({
+    'Feature': X_train_cat.columns,
+    'Importance': tree_model_cat.feature_importances_
+}).sort_values('Importance', ascending=False)
+
+importance_cat_df['Importance_Percent'] = (importance_cat_df['Importance'] * 100).round(2)
+
+# Check zipCode features
+zipcode_features = [col for col in X_train_cat.columns if col.startswith('zipCode')]
+zipcode_importance = importance_cat_df[importance_cat_df['Feature'].isin(zipcode_features)]['Importance'].sum()
+total_importance = importance_cat_df['Importance'].sum()
+zipcode_percent = (zipcode_importance / total_importance * 100).round(2)
+```
+
+### Tree Visualization: Categorical zipCode
+
+### Python
+
+```{python}
+#| label: visualize-tree-cat-python
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+# Visualize tree with one-hot encoded zipCode
+plt.figure(figsize=(10, 6))
+plot_tree(tree_model_cat, 
+          feature_names=X_train_cat.columns,
+          filled=True, 
+          rounded=True,
+          fontsize=8,
+          max_depth=4)
+plt.title("Decision Tree (zipCode One-Hot Encoded)")
+plt.tight_layout()
+plt.show()
+```
+
+### Feature Importance: Categorical zipCode
+
+### Python
+```{python}
+#| label: importance-plot-cat-python
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+
+# Plot feature importance for categorical zipCode
+plt.figure(figsize=(8, 5))
+plt.barh(range(len(importance_cat_df)), importance_cat_df['Importance'], 
+         color='darkgreen', alpha=0.7)
+plt.yticks(range(len(importance_cat_df)), importance_cat_df['Feature'])
+plt.xlabel('Importance Score')
+plt.title('Feature Importance (zipCode One-Hot Encoded)')
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+```
+
+### Consolidated Feature Importance: Grouping zipCode Features
+
+When using one-hot encoding, zipCode is split into multiple binary features. To better understand zipCode's total importance, we can aggregate all zipCode dummy variables together.
+
+```{python}
+#| label: consolidated-importance-python
+#| echo: true
+#| fig-width: 8
+#| fig-height: 5
+
+# Create consolidated feature importance by grouping zipCode features
+importance_consolidated = []
+
+# Get all non-zipCode features
+for feature in importance_cat_df['Feature']:
+    if not feature.startswith('zipCode'):
+        importance_consolidated.append({
+            'Feature': feature,
+            'Importance': importance_cat_df[importance_cat_df['Feature'] == feature]['Importance'].iloc[0]
+        })
+
+# Add consolidated zipCode importance (sum of all zipCode features)
+zipcode_total_importance = importance_cat_df[importance_cat_df['Feature'].str.startswith('zipCode')]['Importance'].sum()
+importance_consolidated.append({
+    'Feature': 'zipCode (all categories)',
+    'Importance': zipcode_total_importance
+})
+
+# Create DataFrame and sort
+consolidated_df = pd.DataFrame(importance_consolidated).sort_values('Importance', ascending=False)
+consolidated_df['Importance_Percent'] = (consolidated_df['Importance'] * 100).round(2)
+
+# Display table
+print("\nConsolidated Feature Importance:")
+print(consolidated_df[['Feature', 'Importance_Percent']].to_string(index=False))
+
+# Plot consolidated importance
+plt.figure(figsize=(8, 5))
+colors = ['coral' if 'zipCode' in feat else 'steelblue' for feat in consolidated_df['Feature']]
+plt.barh(range(len(consolidated_df)), consolidated_df['Importance'], 
+         color=colors, alpha=0.7)
+plt.yticks(range(len(consolidated_df)), consolidated_df['Feature'])
+plt.xlabel('Importance Score')
+plt.title('Consolidated Feature Importance (zipCode Grouped)')
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+
+# Report zipCode's ranking
+zipcode_rank_consolidated = consolidated_df[consolidated_df['Feature'] == 'zipCode (all categories)'].index[0] + 1
+print(f"\nzipCode ranks #{zipcode_rank_consolidated} when aggregated (representing {consolidated_df[consolidated_df['Feature'] == 'zipCode (all categories)']['Importance_Percent'].iloc[0]}% of total importance)")
+```
+
+## Challenge Requirements 📋
+
+### Minimum Requirements for Any Points on Challenge
+
+1. **Create a GitHub Pages Site:** Use the starter repository (see Repository Setup section below) to begin with a working template. The repository includes all the analysis code and visualizations above.
+
+2. **Add Discussion Narrative:** Add your answers to the two discussion questions below in the Discussion Questions section of the rendered HTML.
+
+3. **GitHub Repository:** Use your forked repository (from the starter repository) named "decTreeChallenge" in your GitHub account.
+
+4. **GitHub Pages Setup:** The repository should be made the source of your github pages:
+
+   - Go to your repository settings (click the "Settings" tab in your GitHub repository)
+   - Scroll down to the "Pages" section in the left sidebar
+   - Under "Source", select "Deploy from a branch"
+   - Choose "main" branch and "/ (root)" folder
+   - Click "Save"
+   - Your site will be available at: `https://[your-username].github.io/decTreeChallenge/`
+   - **Note:** It may take a few minutes for the site to become available after enabling Pages
+
+## Getting Started: Repository Setup 🚀
+
+::: {.callout-important}
+## 📁 Quick Start with Starter Repository
+
+**Step 1:** Fork the starter repository to your github account at [https://github.com/flyaflya/decTreeChallenge.git](https://github.com/flyaflya/decTreeChallenge.git)
+
+**Step 2:** Clone your fork locally using Cursor (or VS Code)
+
+**Step 3:** You're ready to start! The repository includes pre-loaded data and a working template with all the analysis above.
+:::
+
+::: {.callout-tip}
+## 💡 Why Use the Starter Repository?
+
+**Benefits:**
+
+- **Pre-loaded data:** All required data and analysis code is included
+- **Working template:** Basic Quarto structure (`index.qmd`) is ready
+- **No setup errors:** Avoid common data loading issues
+- **Focus on analysis:** Spend time on the discussion questions, not data preparation
+:::
+
+### Getting Started Tips
+
+::: {.callout-note}
+## 🎯 Navy SEALs Motto
+
+> "Slow is Smooth and Smooth is Fast"
+
+*Take your time to understand the decision tree mechanics, plan your approach carefully, and execute with precision. Rushing through this challenge will only lead to errors and confusion.*
+:::
+
+::: {.callout-warning}
+## 💾 Important: Save Your Work Frequently!
+
+**Before you start:** Make sure to commit your work often using the Source Control panel in Cursor (Ctrl+Shift+G or Cmd+Shift+G). This prevents the AI from overwriting your progress and ensures you don't lose your work.
+
+**Commit after each major step:**
+
+- After adding your discussion answers
+- After rendering to HTML
+- Before asking the AI for help with new code
+
+**How to commit:**
+
+1. Open Source Control panel (Ctrl+Shift+G)
+2. Stage your changes (+ button)
+3. Write a descriptive commit message
+4. Click the checkmark to commit
+
+*Remember: Frequent commits are your safety net!*
+:::
+
+## Discussion Questions for Challenge
+
+**Your Task:** Add thoughtful narrative answers to these two questions in the Discussion Questions section of your rendered HTML site.
+
+1. **Numerical vs Categorical Encoding:** There are two modelsin Python written above. For each language, the models differ by how zip code is modelled, either as a numerical variable or as a categorical variable. Given what you know about zip codes and real estate prices, how should zip code be modelled, numerically or categorically?  Is zipcode and ordinal or non-ordinal variable?
+
+2. **R vs Python Implementation Differences:** When modelling zip code as a categorical variable, the output tree and feature importance would differ quite significantly had you used R as opposed to Python. Investigate why this is the case.  What does R offer that Python does not? Which language would you say does a better job of modelling zip code as a categorical variable? Can you quote the documentation at [https://scikit-learn.org/stable/modules/tree.html](https://scikit-learn.org/stable/modules/tree.html) suggesting a weakness in the Python implementation? If so, please provide a quote from the documentation.
+
+3. **Are There Any Suggestions for Implementing Decision Trees in Python With Prioper Categorical Handling?** Please poke around the Internet (AI is not as helpful with new libraries) for suggestions on how to implement decision trees in Python with better (i.e. not one-hot encoding) categorical handling.  Please provide a link to the source and a quote from the source.  There is not right answer here, but please provide a thoughtful answer, I am curious to see what you find.
+
+## Discussion Questions and Analysis 📊
+
+### Question 1: Numerical vs Categorical Encoding of Zip Codes
+
+Zip codes must be modeled as **categorical variables**. Despite appearing as numbers (50010, 50011, 50012, 50013), these values represent discrete geographic areas with no meaningful numerical relationships for predicting house prices.
+
+**The problem with numerical encoding:** When treated as numbers, decision trees create splits like "zipCode < 50012.5." This implies zip codes 50010 and 50011 are similar and distinct from 50012 and 50013. In reality, zip code 50010 might be an affluent suburb while 50011 is industrial—numerical proximity means nothing for housing values.
+
+**Ordinal classification:** Zip codes are **non-ordinal categorical variables**. Ordinal variables have meaningful order (education levels: high school < bachelor's < PhD). Zip codes lack this property—50013 being numerically larger than 50010 doesn't correlate with higher or lower home prices. Each zip code simply identifies a different neighborhood.
+
+**Real-world impact:** Our numerical encoding model ranks zip code near the bottom in feature importance, suggesting location barely matters for house prices. Any real estate professional knows this is wrong—location often dominates pricing. By encoding zip codes numerically, we've blinded our model to one of the strongest predictors. Proper categorical encoding (one-hot encoding) allows splits like "Is this house in zip code 50010?" capturing the true nature of geographic distinctions.
+
+---
+
+### Question 2: R vs Python Implementation Differences
+
+**The core issue:** Python's scikit-learn and R's rpart handle categorical variables fundamentally differently, with major consequences for feature importance interpretation.
+
+**Python's limitation:** The [scikit-learn documentation](https://scikit-learn.org/stable/modules/tree.html#tree-algorithms-id3-c4-5-c5-0-and-cart) explicitly states:
+
+> "Some advantages of decision trees are: ... Able to handle both numerical and categorical data. However, scikit-learn implementation does not support categorical variables for now."
+
+Scikit-learn only supports **binary splits**. When we one-hot encode our 4 zip codes, we create 4 separate binary features. Each split tests one condition at a time ("Is this zipCode_50010?"). The documentation acknowledges this creates problems:
+
+> "Some features (e.g., categorical features with one-hot encoding) can be artificially split into many features which might not be necessary for the prediction task."
+
+**R's advantage:** R's `rpart` package handles categorical variables natively. The [rpart documentation](https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf) explains:
+
+> "For a categorical predictor with m levels, the split is of the form 'x ∈ S' where S is a subset of the m possible values. For regression trees, rpart can consider up to 2^(m-1) - 1 possible splits."
+
+For our 4 zip codes, rpart can evaluate splits like {50010, 50013} vs {50011, 50012} in a **single split**, grouping zip codes by their actual relationship to house prices. If zip codes 50010 and 50013 have similar prices, rpart discovers this directly.
+
+**Feature importance impact:**
+- **Python:** Zip code importance fragments across 4 separate features (zipCode_50010, zipCode_50011, etc.), each competing individually against continuous variables
+- **R:** Zip code appears as a single feature with consolidated importance, accurately reflecting location's total contribution to predictions
+
+**Verdict:** R's `rpart` is superior for categorical variables because it preserves them as single, interpretable concepts rather than fragmenting them into artificial binary features. This produces both more accurate feature importance rankings and more compact, interpretable trees.
+
+---
+
+### Question 3: State of the Art for Categorical Variables in Python
+
+While scikit-learn has limitations, modern Python libraries have solved the categorical variable problem:
+
+**CatBoost** - Built specifically for categorical data. From the [CatBoost documentation](https://catboost.ai/en/docs/concepts/algorithm-main-stages_cat-to-numberic):
+
+> "CatBoost uses a combination of one-hot encoding and an advanced mean encoding for categorical features. Unlike other libraries, CatBoost can work with categorical features without any preprocessing. It implements an efficient way to encode categorical features during training that avoids target leakage and overfitting."
+
+CatBoost automatically handles categorical variables without preprocessing—ideal for high-cardinality variables like zip codes.
+
+**LightGBM** - Microsoft's solution with native categorical support. From the [LightGBM documentation](https://lightgbm.readthedocs.io/en/latest/Advanced-Topics.html#categorical-feature-support):
+
+> "LightGBM can use categorical features directly (without one-hot encoding). The experiment on Expo data shows about 8x speed-up compared with one-hot encoding... LightGBM uses Fisher's method to find the best split point for categorical features."
+
+Both faster and more effective than one-hot encoding.
+
+**Practical recommendation:** For production work with categorical variables, use CatBoost or LightGBM instead of scikit-learn's base decision trees. Both libraries rival or exceed R's categorical handling while maintaining Python's ecosystem advantages. The [category_encoders](https://contrib.scikit-learn.org/category_encoders/) library also provides sophisticated encoding methods for sklearn compatibility, including target encoding that preserves more information than one-hot encoding.
+
+---
+
