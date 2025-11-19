@@ -22,19 +22,6 @@ execute:
 
 **What is Feature Importance?** In decision trees, feature importance measures how much each variable contributes to reducing impurity (or improving prediction accuracy) across all splits in the tree. It's a key metric for understanding which variables matter most for your predictions.
 
-::: {.callout-important}
-## 🎯 The Key Insight: Encoding Matters for Interpretability
-
-**The problem:** When we encode categorical variables as numerical values (like 1, 2, 3, 4...), decision trees treat them as if they have a meaningful numerical order. This can completely distort our analysis.
-
-**The Real-World Context:** In real estate, we know that neighborhood quality, house style, and other categorical factors are crucial for predicting home prices. But if we encode these as numbers, we might get misleading insights about which features actually matter most.
-
-**The Devastating Reality:** Even sophisticated machine learning models can give us completely wrong insights about feature importance if we don't properly encode our variables. A categorical variable that should be among the most important might appear irrelevant, while a numerical variable might appear artificially important.
-
-:::
-
-Let's assume we want to predict house prices and understand which features matter most. The key question is: **How does encoding categorical variables as numbers affect our understanding of feature importance?**
-
 ## The Ames Housing Dataset 🏠
 
 We are analyzing the Ames Housing dataset which contains detailed information about residential properties sold in Ames, Iowa from 2006 to 2010. This dataset is perfect for our analysis because it contains a categorical variable (like zip code) and numerical variables (like square footage, year built, number of bedrooms).
@@ -94,7 +81,7 @@ print(f"Model built with {tree_model.get_n_leaves()} terminal nodes")
 #| fig-height: 4
 
 # Visualize tree
-plt.figure(figsize=(6.5, 4))
+plt.figure(figsize=(8, 4))
 plot_tree(tree_model, 
           feature_names=X_train.columns,
           filled=True, 
@@ -216,7 +203,7 @@ zipcode_percent = (zipcode_importance / total_importance * 100).round(2)
 #| fig-height: 4
 
 # Visualize tree with one-hot encoded zipCode
-plt.figure(figsize=(6.5, 4))
+plt.figure(figsize=(8, 4))
 plot_tree(tree_model_cat, 
           feature_names=X_train_cat.columns,
           filled=True, 
@@ -248,30 +235,6 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 ```
-
-## Challenge Requirements 📋
-
-### Minimum Requirements for Any Points on Challenge
-
-1. **Create a GitHub Pages Site:** Use the starter repository (see Repository Setup section below) to begin with a working template. The repository includes all the analysis code and visualizations above.
-
-2. **Add Discussion Narrative:** Add your answers to the two discussion questions below in the Discussion Questions section of the rendered HTML.
-
-3. **GitHub Repository:** Use your forked repository (from the starter repository) named "decTreeChallenge" in your GitHub account.
-
-4. **GitHub Pages Setup:** The repository should be made the source of your github pages:
-
-   - Go to your repository settings (click the "Settings" tab in your GitHub repository)
-   - Scroll down to the "Pages" section in the left sidebar
-   - Under "Source", select "Deploy from a branch"
-   - Choose "main" branch and "/ (root)" folder
-   - Click "Save"
-   - Your site will be available at: `https://[your-username].github.io/decTreeChallenge/`
-   - **Note:** It may take a few minutes for the site to become available after enabling Pages
-
-## Getting Started: Repository Setup 🚀
-
-### Getting Started Tips
 
 ## Discussion Questions and Analysis 📊
 

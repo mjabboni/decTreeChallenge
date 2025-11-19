@@ -78,22 +78,6 @@ ul.task-list li input[type="checkbox"] {
 </blockquote>
 <p><strong>The Core Problem:</strong> Decision trees are often praised for their interpretability and ability to handle both numerical and categorical variables. But what happens when we encode categorical variables as numbers? How does this affect our understanding of feature importance?</p>
 <p><strong>What is Feature Importance?</strong> In decision trees, feature importance measures how much each variable contributes to reducing impurity (or improving prediction accuracy) across all splits in the tree. It’s a key metric for understanding which variables matter most for your predictions.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>🎯 The Key Insight: Encoding Matters for Interpretability
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>The problem:</strong> When we encode categorical variables as numerical values (like 1, 2, 3, 4…), decision trees treat them as if they have a meaningful numerical order. This can completely distort our analysis.</p>
-<p><strong>The Real-World Context:</strong> In real estate, we know that neighborhood quality, house style, and other categorical factors are crucial for predicting home prices. But if we encode these as numbers, we might get misleading insights about which features actually matter most.</p>
-<p><strong>The Devastating Reality:</strong> Even sophisticated machine learning models can give us completely wrong insights about feature importance if we don’t properly encode our variables. A categorical variable that should be among the most important might appear irrelevant, while a numerical variable might appear artificially important.</p>
-</div>
-</div>
-<p>Let’s assume we want to predict house prices and understand which features matter most. The key question is: <strong>How does encoding categorical variables as numbers affect our understanding of feature importance?</strong></p>
 </section>
 <section id="the-ames-housing-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="the-ames-housing-dataset">The Ames Housing Dataset 🏠</h2>
@@ -123,7 +107,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/visualize-tree-python-output-1.png" id="visualize-tree-python" width="619" height="374" class="figure-img"></p>
+<p><img src="index_files/figure-html/visualize-tree-python-output-1.png" id="visualize-tree-python" width="757" height="374" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -186,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/visualize-tree-cat-python-output-1.png" id="visualize-tree-cat-python" width="612" height="374" class="figure-img"></p>
+<p><img src="index_files/figure-html/visualize-tree-cat-python-output-1.png" id="visualize-tree-cat-python" width="750" height="374" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -206,33 +190,6 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
-</section>
-</section>
-<section id="challenge-requirements" class="level2">
-<h2 class="anchored" data-anchor-id="challenge-requirements">Challenge Requirements 📋</h2>
-<section id="minimum-requirements-for-any-points-on-challenge" class="level3">
-<h3 class="anchored" data-anchor-id="minimum-requirements-for-any-points-on-challenge">Minimum Requirements for Any Points on Challenge</h3>
-<ol type="1">
-<li><p><strong>Create a GitHub Pages Site:</strong> Use the starter repository (see Repository Setup section below) to begin with a working template. The repository includes all the analysis code and visualizations above.</p></li>
-<li><p><strong>Add Discussion Narrative:</strong> Add your answers to the two discussion questions below in the Discussion Questions section of the rendered HTML.</p></li>
-<li><p><strong>GitHub Repository:</strong> Use your forked repository (from the starter repository) named “decTreeChallenge” in your GitHub account.</p></li>
-<li><p><strong>GitHub Pages Setup:</strong> The repository should be made the source of your github pages:</p>
-<ul>
-<li>Go to your repository settings (click the “Settings” tab in your GitHub repository)</li>
-<li>Scroll down to the “Pages” section in the left sidebar</li>
-<li>Under “Source”, select “Deploy from a branch”</li>
-<li>Choose “main” branch and “/ (root)” folder</li>
-<li>Click “Save”</li>
-<li>Your site will be available at: <code>https://[your-username].github.io/decTreeChallenge/</code></li>
-<li><strong>Note:</strong> It may take a few minutes for the site to become available after enabling Pages</li>
-</ul></li>
-</ol>
-</section>
-</section>
-<section id="getting-started-repository-setup" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started-repository-setup">Getting Started: Repository Setup 🚀</h2>
-<section id="getting-started-tips" class="level3">
-<h3 class="anchored" data-anchor-id="getting-started-tips">Getting Started Tips</h3>
 </section>
 </section>
 <section id="discussion-questions-and-analysis" class="level2">
