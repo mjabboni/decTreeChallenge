@@ -90,11 +90,11 @@ print(f"Model built with {tree_model.get_n_leaves()} terminal nodes")
 
 ```{python}
 #| label: visualize-tree-python
-#| fig-width: 10
-#| fig-height: 5
+#| fig-width: 8
+#| fig-height: 4
 
 # Visualize tree
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(8, 4))
 plot_tree(tree_model, 
           feature_names=X_train.columns,
           filled=True, 
@@ -212,11 +212,11 @@ zipcode_percent = (zipcode_importance / total_importance * 100).round(2)
 
 ```{python}
 #| label: visualize-tree-cat-python
-#| fig-width: 10
-#| fig-height: 5
+#| fig-width: 8
+#| fig-height: 4
 
 # Visualize tree with one-hot encoded zipCode
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(8, 4))
 plot_tree(tree_model_cat, 
           feature_names=X_train_cat.columns,
           filled=True, 
@@ -271,17 +271,6 @@ plt.show()
 
 ## Getting Started: Repository Setup 🚀
 
-::: {.callout-tip}
-## 💡 Why Use the Starter Repository?
-
-**Benefits:**
-
-- **Pre-loaded data:** All required data and analysis code is included
-- **Working template:** Basic Quarto structure (`index.qmd`) is ready
-- **No setup errors:** Avoid common data loading issues
-- **Focus on analysis:** Spend time on the discussion questions, not data preparation
-:::
-
 ### Getting Started Tips
 
 ::: {.callout-note}
@@ -322,37 +311,6 @@ plt.show()
 2. **R vs Python Implementation Differences:** When modelling zip code as a categorical variable, the output tree and feature importance would differ quite significantly had you used R as opposed to Python. Investigate why this is the case.  What does R offer that Python does not? Which language would you say does a better job of modelling zip code as a categorical variable? Can you quote the documentation at [https://scikit-learn.org/stable/modules/tree.html](https://scikit-learn.org/stable/modules/tree.html) suggesting a weakness in the Python implementation? If so, please provide a quote from the documentation.
 
 3. **Are There Any Suggestions for Implementing Decision Trees in Python With Prioper Categorical Handling?** Please poke around the Internet (AI is not as helpful with new libraries) for suggestions on how to implement decision trees in Python with better (i.e. not one-hot encoding) categorical handling.  Please provide a link to the source and a quote from the source.  There is not right answer here, but please provide a thoughtful answer, I am curious to see what you find.
-
-## Grading Rubric 🎓
-
-::: {.callout-important}
-## 📊 What You're Really Being Graded On
-
-**This is an investigative report, not a coding exercise.** You're analyzing decision tree models and reporting your findings like a professional analyst would. Think of this as a brief you'd write for a client or manager about why proper variable encoding matters in machine learning.
-
-**What makes a great report:**
-
-- **Clear narrative:** Tell the story of what you discovered about decision tree feature importance
-- **Insightful analysis:** Focus on the most interesting differences between numerical and categorical encoding
-- **Professional presentation:** Clean, readable, and engaging
-- **Concise conclusions:** No AI babble or unnecessary technical jargon
-- **Human insights:** Your interpretation of what the feature importance rankings actually mean (or don't mean)
-- **Documentation-based analysis:** For question 2, ground your analysis in actual library documentation
-
-**What we're looking for:** A compelling 1-2 minute read that demonstrates both the power of decision trees for interpretability and the critical importance of proper variable encoding.  And a note on the current state of the art in decision tree implementation for categorical variables in Python.
-:::
-
-### Questions to Answer for 75% Grade on Challenge
-
-1. **Numerical vs Categorical Analysis:** Provide a clear, well-reasoned answer to question 1 about how zip codes should be modelled. Your answer should demonstrate understanding of why categorical variables need special treatment in decision trees.
-
-### Questions to Answer for 85% Grade on Challenge
-
-2. **R vs Python Implementation Analysis:** Provide a thorough analysis of question 2, including investigation of the official documentation for both `rpart` (R) and `sklearn.tree.DecisionTreeRegressor` (Python). Your analysis should explain the technical differences and provide a reasoned opinion about which implementation handles categorical variables better.  You do NOT have to run R-code.
-
-### Questions to Answer for 95% - 100% Grade on Challenge
-
-3. **Professional Presentation:** Your discussion answers should be written in a professional, engaging style that would be appropriate for a business audience learning about one-hot encoding and decision trees. Avoid technical jargon and focus on practical implications.  Include a specific quote from the official documentation of `sklearn.tree.DecisionTreeRegressor` that supports your analysis. 
 
 ## Discussion Questions and Analysis 📊
 
