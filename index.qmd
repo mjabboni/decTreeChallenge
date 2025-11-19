@@ -4,7 +4,7 @@ subtitle: "Feature Importance and Categorical Variable Encoding"
 format:
   html: default
 execute:
-  echo: true
+  echo: false
   eval: true
 ---
 
@@ -13,14 +13,6 @@ execute:
 ## Challenge Overview
 
 **Your Mission:** Create a simple GitHub Pages site that demonstrates how decision trees measure feature importance and analyzes the critical differences between categorical and numerical variable encoding. You'll answer two key discussion questions by adding narrative to a pre-built analysis and posting those answers to your GitHub Pages site as a rendered HTML document.
-
-::: {.callout-warning}
-## ⚠️ AI Partnership Required
-
-This challenge pushes boundaries intentionally. You'll tackle problems that normally require weeks of study, but with Cursor AI as your partner (and your brain keeping it honest), you can accomplish more than you thought possible.
-
-**The new reality:** The four stages of competence are Ignorance → Awareness → Learning → Mastery. AI lets us produce Mastery-level work while operating primarily in the Awareness stage. I focus on awareness training, you leverage AI for execution, and together we create outputs that used to require years of dedicated study.
-:::
 
 ## The Decision Tree Problem 🎯
 
@@ -59,7 +51,6 @@ We are analyzing the Ames Housing dataset which contains detailed information ab
 
 ```{python}
 #| label: load-and-model-python
-#| echo: true
 
 import pandas as pd
 import numpy as np
@@ -99,12 +90,11 @@ print(f"Model built with {tree_model.get_n_leaves()} terminal nodes")
 
 ```{python}
 #| label: visualize-tree-python
-#| echo: true
-#| fig-width: 10
+#| fig-width: 8.5
 #| fig-height: 6
 
 # Visualize tree
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(8.5, 6))
 plot_tree(tree_model, 
           feature_names=X_train.columns,
           filled=True, 
@@ -181,7 +171,6 @@ Now let's repeat the analysis with zipCode properly encoded as categorical varia
 
 ```{python}
 #| label: categorical-python
-#| echo: true
 #| include: false
 # One-hot encode zipCode
 import pandas as pd
@@ -223,12 +212,11 @@ zipcode_percent = (zipcode_importance / total_importance * 100).round(2)
 
 ```{python}
 #| label: visualize-tree-cat-python
-#| echo: true
-#| fig-width: 10
+#| fig-width: 8.5
 #| fig-height: 6
 
 # Visualize tree with one-hot encoded zipCode
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(8.5, 6))
 plot_tree(tree_model_cat, 
           feature_names=X_train_cat.columns,
           filled=True, 
