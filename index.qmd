@@ -90,16 +90,16 @@ print(f"Model built with {tree_model.get_n_leaves()} terminal nodes")
 
 ```{python}
 #| label: visualize-tree-python
-#| fig-width: 8.5
-#| fig-height: 6
+#| fig-width: 10
+#| fig-height: 5
 
 # Visualize tree
-plt.figure(figsize=(8.5, 6))
+plt.figure(figsize=(10, 5))
 plot_tree(tree_model, 
           feature_names=X_train.columns,
           filled=True, 
           rounded=True,
-          fontsize=10,
+          fontsize=9,
           max_depth=3)
 plt.title("Decision Tree (zipCode as Numerical)")
 plt.tight_layout()
@@ -212,16 +212,16 @@ zipcode_percent = (zipcode_importance / total_importance * 100).round(2)
 
 ```{python}
 #| label: visualize-tree-cat-python
-#| fig-width: 8.5
-#| fig-height: 6
+#| fig-width: 10
+#| fig-height: 5
 
 # Visualize tree with one-hot encoded zipCode
-plt.figure(figsize=(8.5, 6))
+plt.figure(figsize=(10, 5))
 plot_tree(tree_model_cat, 
           feature_names=X_train_cat.columns,
           filled=True, 
           rounded=True,
-          fontsize=8,
+          fontsize=7,
           max_depth=4)
 plt.title("Decision Tree (zipCode One-Hot Encoded)")
 plt.tight_layout()
@@ -270,16 +270,6 @@ plt.show()
    - **Note:** It may take a few minutes for the site to become available after enabling Pages
 
 ## Getting Started: Repository Setup 🚀
-
-::: {.callout-important}
-## 📁 Quick Start with Starter Repository
-
-**Step 1:** Fork the starter repository to your github account at [https://github.com/flyaflya/decTreeChallenge.git](https://github.com/flyaflya/decTreeChallenge.git)
-
-**Step 2:** Clone your fork locally using Cursor (or VS Code)
-
-**Step 3:** You're ready to start! The repository includes pre-loaded data and a working template with all the analysis above.
-:::
 
 ::: {.callout-tip}
 ## 💡 Why Use the Starter Repository?
